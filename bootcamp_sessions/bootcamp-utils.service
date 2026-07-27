@@ -1,0 +1,22 @@
+[Unit]
+# One-shot service that installs the shared bootcamp_utils library on first boot
+# of a freshly flashed KV260 image, so notebooks can `import bootcamp_utils`
+# from any folder with zero manual steps.
+Description=Install shared bootcamp_utils library for PYNQ Bootcamp
+After=network-online.target
+Wants=network-online.target
+# Only run until it succeeds once; the ConditionPathExists guard below makes it
+# effectively idempotent.
+ConditionPathExists=/home/root/jupyter_notebooks/PYNQ_Bootcamp/bootcamp_sessions/install.sh
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Standard PYNQ deploy location for the bootcamp repo.
+WorkingDirectory=/home/root/jupyter_notebooks/PYNQ_Bootcamp/bootcamp_sessions
+ExecStart=/usr/bin/env bash /home/root/jupyter_notebooks/PYNQ_Bootcamp/bootcamp_sessions/install.sh
+# Mark completion so re-runs are cheap (install.sh is itself idempotent).
+ExecStartPost=/usr/bin/touch /var/lib/bootcamp-utils.installed
+
+[Install]
+WantedBy=multi-user.target

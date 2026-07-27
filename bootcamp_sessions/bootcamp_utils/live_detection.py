@@ -1,15 +1,17 @@
 """
-Live real-time object detection loop.
+live_detection.py — the full real-time webcam detection loop (shared).
 
-Concepts covered:
-  - Opening a webcam with OpenCV (cv2.VideoCapture)
-  - Drawing bounding boxes and labels onto frames (cv2.rectangle, cv2.putText)
-  - Streaming annotated frames back to the Jupyter notebook
-  - Updating an OLED display with the top detection result
-  - Running a blocking loop on a background thread so the notebook UI stays responsive
+This is the "production" version of a live camera loop. It:
+  - Opens the webcam with OpenCV
+  - Draws bounding boxes and labels onto each frame
+  - Streams the annotated frames back into the notebook
+  - Optionally shows the top result on a Grove OLED screen
+  - Runs on a background thread so the notebook stays responsive
+  - Gives the user a Stop button and a confidence slider
 
 Students don't need to edit this file — read it to understand the pattern,
-then apply the same ideas in the Challenges section.
+then apply the same ideas in the Challenges section. Used by PYNQ 301 and any
+detection-style session.
 """
 import threading
 import cv2
@@ -23,10 +25,11 @@ def launch_live_detection(run, class_names, colors, oled=None):
 
     Parameters
     ----------
-    run         : the run() function from the notebook
+    run         : the run() function from the notebook that takes a frame and
+                  returns (boxes, scores, classes)
     class_names : list of class name strings
     colors      : list of (R, G, B) tuples, one per class
-    oled        : optional OLED display object (pass None to skip OLED output)
+    oled        : optional Grove OLED object (pass None to skip OLED output)
     """
     # ── Controls ───────────────────────────────────────────────────────────────
     stop_button = widgets.ToggleButton(

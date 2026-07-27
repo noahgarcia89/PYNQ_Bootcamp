@@ -1,6 +1,8 @@
 """
 YOLOv3-specific helpers — pre-processing, anchor decoding, NMS, drawing, run().
-Generic utilities (colors, classes, DPU buffers, image listing) live in ./bootcamp_utils.
+Generic utilities (colors, classes, DPU buffers, image listing) live in the ONE
+shared bootcamp_utils library, which is installed as a package (see
+../install.sh), so it imports cleanly from anywhere.
 """
 import numpy as np
 import cv2
@@ -8,9 +10,10 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from IPython.display import display, Image
 
-# Re-export shared utilities so notebook code keeps working unchanged
-from bootcamp_utils.color_utils import load_classes, make_colors
-from bootcamp_utils.dpu_utils import setup_dpu_buffers, list_images
+# Re-export shared utilities so notebook code keeps working unchanged.
+# YOLO has 3 outputs, so we use setup_dpu_buffers_multi (aliased to the old name).
+from bootcamp_utils import load_classes, make_colors, list_images
+from bootcamp_utils import setup_dpu_buffers_multi as setup_dpu_buffers
 
 def load_anchors():
     anchor_list = [10,13,16,30,33,23,30,61,62,45,59,119,116,90,156,198,373,326]
